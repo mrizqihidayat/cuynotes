@@ -1,0 +1,34 @@
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      - MYSQL_USER_=rizqi
+      - MYSQL_PASSWORD_=123
+      - MYSQL_DATABASE=cuynotes
+      - MYSQL_ROOT_PASSWORD=root
+    container_name: cuynotes_db
+    volumes:
+      - db_mysql_data:/var/lib/mysql
+
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "5000:5000"
+    container_name: backend_flask
+    restart: unless-stopped
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ./client
+    ports:
+      - "3000:3000"
+    container_name: frontend_nextjs
+    restart: unless-stopped
+    depends_on:
+      - backend
+
+volumes:
+  db_mysql_data:
